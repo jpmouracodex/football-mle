@@ -44,31 +44,10 @@ from football_mle.sources import (  # noqa: E402
     recent_seasons,
     world_cup_2026_fixtures,
 )
-from flags import with_flag  # noqa: E402
+from flags import flag_url, with_flag  # noqa: E402
 from i18n import LANGUAGES, make_t  # noqa: E402
 
 st.set_page_config(page_title="football_mle — Goal prediction", page_icon="⚽", layout="wide")
-
-# Polyfill for country-flag emojis on Windows (Segoe UI Emoji lacks regional indicators).
-# TwemojiCountryFlags covers U+1F1E6-1F1FF (ISO flags) and subdivision tag sequences.
-st.markdown(
-    """
-    <style>
-    @font-face {
-        font-family: 'TwemojiCountryFlags';
-        unicode-range: U+1F1E0-1F1FF, U+1F3F4, U+200D, U+FE0F,
-                       U+E0062-U+E0065, U+E006E, U+E0067, U+E0073,
-                       U+E0063, U+E0074, U+E0077, U+E006C, U+E007F;
-        src: url('https://cdn.jsdelivr.net/npm/country-flag-emoji-polyfill@0.1/dist/TwemojiCountryFlags.woff2')
-             format('woff2');
-    }
-    html, body, [class*="css"] {
-        font-family: 'TwemojiCountryFlags', 'Source Sans Pro', sans-serif;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 
 # ---------------------------------------------------------------------------
@@ -124,10 +103,15 @@ def simulate_world_cup(window_years: int, model: str, half_life_days: int, n_sim
 def ratings_section(model_fit: FitResult, t) -> None:
     st.subheader(t("ratings_title"))
     table = model_fit.ratings_table().copy()
-    table["team"] = table["team"].apply(with_flag)
+    table.insert(0, "flag", table["team"].apply(flag_url))
     col_table, col_chart = st.columns([1, 1])
     with col_table:
-        st.dataframe(table.round(3), use_container_width=True, height=420)
+        st.dataframe(
+            table.round(3),
+            column_config={"flag": st.column_config.ImageColumn("", width="small")},
+            use_container_width=True,
+            height=420,
+        )
     with col_chart:
         chart = (
             alt.Chart(table)
@@ -175,34 +159,37 @@ def score_heatmap(matrix, home: str, away: str, t, max_display: int = 6) -> alt.
 def predictor_section(model_fit: FitResult, t, allow_neutral: bool = False, default_neutral: bool = False) -> None:
     st.subheader(t("predictor_title"))
     teams = sorted(model_fit.teams)
-    teams_display = [with_flag(tm) for tm in teams]
     c1, c2, c3 = st.columns([2, 2, 1])
-    home_disp = c1.selectbox(t("home_team"), teams_display, index=0)
-    away_disp = c2.selectbox(t("away_team"), teams_display, index=min(1, len(teams_display) - 1))
+    home = c1.selectbox(t("home_team"), teams, index=0)
+    away = c2.selectbox(t("away_team"), teams, index=min(1, len(teams) - 1))
     neutral = c3.checkbox(t("neutral_venue"), value=default_neutral) if allow_neutral else False
-
-    # Map display name back to raw team name for the model.
-    disp_to_raw = {with_flag(tm): tm for tm in teams}
-    home = disp_to_raw.get(home_disp, home_disp)
-    away = disp_to_raw.get(away_disp, away_disp)
 
     if home == away:
         st.info(t("pick_two"))
         return
 
     prediction = predict_match(model_fit, home, away, max_goals=10, neutral=neutral)
+
+    # Show flag images above each team name in the metrics row.
+    fh, fa = flag_url(home, 24), flag_url(away, 24)
+    img = lambda url, name: f'<img src="{url}" height="18" style="vertical-align:middle;margin-right:4px">{name}' if url else name
+    st.markdown(
+        f'<p style="margin:0">{img(fh, home)} vs {img(fa, away)}</p>',
+        unsafe_allow_html=True,
+    )
+
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric(f"1 · {home_disp}", f"{100 * prediction.prob_home:.1f}%")
+    m1.metric(f"1 · {home}", f"{100 * prediction.prob_home:.1f}%")
     m2.metric(f"X · {t('draw')}", f"{100 * prediction.prob_draw:.1f}%")
-    m3.metric(f"2 · {away_disp}", f"{100 * prediction.prob_away:.1f}%")
+    m3.metric(f"2 · {away}", f"{100 * prediction.prob_away:.1f}%")
     m4.metric(
         t("expected_goals"),
         f"{prediction.expected_home_goals:.2f} – {prediction.expected_away_goals:.2f}",
     )
     matrix = score_matrix(model_fit, home, away, max_goals=10, neutral=neutral)
-    st.altair_chart(score_heatmap(matrix, home_disp, away_disp, t), use_container_width=True)
+    st.altair_chart(score_heatmap(matrix, home, away, t), use_container_width=True)
     s = prediction.most_likely_score
-    st.caption(t("most_likely", home=home_disp, hs=s[0], as_=s[1], away=away_disp,
+    st.caption(t("most_likely", home=home, hs=s[0], as_=s[1], away=away,
                  prob=100 * prediction.most_likely_score_prob))
 
 
@@ -266,14 +253,13 @@ def world_cup_page(t) -> None:
             st.info(t("live_info", played=n_played, total=len(fixtures)))
         st.subheader(t("tournament_probs"))
         top = probs.head(16).copy()
-        top["team_display"] = top["team"].apply(with_flag)
         chart = (
             alt.Chart(top)
             .mark_bar()
             .encode(
                 x=alt.X("p_champion:Q", title=t("pwin_axis"), axis=alt.Axis(format="%")),
-                y=alt.Y("team_display:N", sort="-x", title=None),
-                tooltip=["team_display", "group",
+                y=alt.Y("team:N", sort="-x", title=None),
+                tooltip=["team", "group",
                          alt.Tooltip("p_advance:Q", format=".1%"),
                          alt.Tooltip("p_champion:Q", format=".1%")],
             )
@@ -281,7 +267,7 @@ def world_cup_page(t) -> None:
         )
         st.altair_chart(chart, use_container_width=True)
         show = probs.copy()
-        show["team"] = show["team"].apply(with_flag)
+        show.insert(0, "flag", show["team"].apply(flag_url))
         prob_cols = ["p_group_winner", "p_advance", "p_round16", "p_quarterfinal",
                      "p_semifinal", "p_final", "p_champion"]
         for c in prob_cols:
@@ -292,7 +278,12 @@ def world_cup_page(t) -> None:
             "p_round16": t("col_r16"), "p_quarterfinal": t("col_qf"),
             "p_semifinal": t("col_sf"), "p_final": t("col_final"), "p_champion": t("col_champion"),
         })
-        st.dataframe(show, use_container_width=True, height=420)
+        st.dataframe(
+            show,
+            column_config={"flag": st.column_config.ImageColumn("", width="small")},
+            use_container_width=True,
+            height=420,
+        )
         st.caption(t("wc_caption"))
 
     with tab_groups:
@@ -302,7 +293,12 @@ def world_cup_page(t) -> None:
         for i, label in enumerate(sorted(groups)):
             with cols[i % 4]:
                 st.markdown("**" + t("group_label", label=label) + "**")
-                st.write("\n".join(f"- {with_flag(tm)}" for tm in groups[label]))
+                lines = []
+                for tm in groups[label]:
+                    url = flag_url(tm, 20)
+                    img_tag = f'<img src="{url}" height="14" style="vertical-align:middle;margin-right:4px">' if url else ""
+                    lines.append(f"<li>{img_tag}{tm}</li>")
+                st.markdown("<ul>" + "".join(lines) + "</ul>", unsafe_allow_html=True)
 
     with tab_ratings:
         ratings_section(model_fit, t)

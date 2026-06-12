@@ -74,3 +74,22 @@ def with_flag(name: str, sep: str = " ") -> str:
     """Prefix ``name`` with its flag emoji when available."""
     emoji = flag(name)
     return f"{emoji}{sep}{name}" if emoji else name
+
+
+# ---------------------------------------------------------------------------
+# Image-based flags (flagcdn.com) — more reliable than emoji on Windows
+# ---------------------------------------------------------------------------
+_SUBDIVISION_CODES: dict[str, str] = {
+    "England": "gb-eng",
+    "Scotland": "gb-sct",
+    "Wales": "gb-wls",
+}
+
+
+def flag_url(name: str, width: int = 20) -> str:
+    """Return a flagcdn.com PNG URL for the country, or ``""`` if unknown."""
+    sub = _SUBDIVISION_CODES.get(name)
+    if sub:
+        return f"https://flagcdn.com/w{width}/{sub}.png"
+    code = _ISO2.get(name, "").lower()
+    return f"https://flagcdn.com/w{width}/{code}.png" if code else ""
