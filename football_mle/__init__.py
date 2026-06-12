@@ -2,7 +2,8 @@ r"""
 football_mle — Goal prediction by Maximum Likelihood Estimation (MLE).
 
 A from-scratch implementation of the Maher (1982) and Dixon-Coles (1997) models
-for football result prediction, featuring:
+(extending the applied Poisson model of Vizzoni, 2018) for football result
+prediction, featuring:
 
 * time-decay weighting (Dixon & Coles, 1997);
 * MLE via ``scipy.optimize.minimize`` (SLSQP) rather than a black-box GLM;

@@ -15,7 +15,8 @@ LANGUAGES: dict[str, str] = {"English": "en", "Português": "pt", "Español": "e
 TRANSLATIONS: dict[str, dict[str, str]] = {
     "en": {
         "subtitle": (
-            "Maher (1982) & Dixon-Coles (1997) models fitted from scratch by MLE. "
+            "Maher (1982) & Dixon-Coles (1997) models, extending Vizzoni (2018), "
+            "fitted from scratch by MLE. "
             "Free data: football-data.co.uk (clubs) and martj42/international_results "
             "(national teams)."
         ),
@@ -81,7 +82,8 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     },
     "pt": {
         "subtitle": (
-            "Modelos de Maher (1982) e Dixon-Coles (1997) ajustados de raiz por MLE. "
+            "Modelos de Maher (1982) e Dixon-Coles (1997), estendendo Vizzoni (2018), "
+            "ajustados de raiz por MLE. "
             "Dados grátis: football-data.co.uk (clubes) e martj42/international_results "
             "(seleções)."
         ),
@@ -147,7 +149,8 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     },
     "es": {
         "subtitle": (
-            "Modelos de Maher (1982) y Dixon-Coles (1997) ajustados desde cero por MLE. "
+            "Modelos de Maher (1982) y Dixon-Coles (1997), extendiendo a Vizzoni (2018), "
+            "ajustados desde cero por MLE. "
             "Datos gratuitos: football-data.co.uk (clubes) y martj42/international_results "
             "(selecciones)."
         ),

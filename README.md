@@ -1,9 +1,10 @@
 # ⚽ football_mle — Goal prediction by Maximum Likelihood
 
 A **from-scratch** implementation of the **Maher (1982)** and **Dixon-Coles (1997)**
-football models, estimated by **Maximum Likelihood (MLE)** with numerical
-optimization — not a black-box GLM — plus a **Streamlit** front-end that pulls
-**free, key-less data** for major leagues and the **2026 FIFA World Cup**.
+football models — extending the applied Poisson approach of **Vizzoni (2018)** —
+estimated by **Maximum Likelihood (MLE)** with numerical optimization (not a
+black-box GLM), plus a **Streamlit** front-end that pulls **free, key-less data**
+for major leagues and the **2026 FIFA World Cup**.
 
 The likelihood, its analytic gradient, the time-decay weighting, the low-score
 correction, the score matrix and the validation metrics are all built explicitly,
@@ -176,4 +177,5 @@ runtime — no API keys or secrets required.
 
 - Maher, M. J. (1982). *Modelling association football scores.* **Statistica Neerlandica**, 36(3), 109–118.
 - Dixon, M. J., & Coles, S. G. (1997). *Modelling association football scores and inefficiencies in the football betting market.* **Applied Statistics**, 46(2), 265–280.
+- Vizzoni, A. R. (2018). *Estatística no futebol.* Final-year project (BSc in Statistics & in Actuarial Science, advisor D. Gamerman), Instituto de Matemática, **Universidade Federal do Rio de Janeiro (UFRJ)**, Rio de Janeiro. — the applied Poisson model this project extends.
 - Constantinou, A. C., & Fenton, N. E. (2012). *Solving the problem of inadequate scoring rules…* **JQAS**, 8(1).

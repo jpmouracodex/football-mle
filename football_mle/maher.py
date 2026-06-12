@@ -11,10 +11,10 @@ on the team attack, the opponent defense and the home advantage:
 
 Estimation is by maximum likelihood with the identifiability constraint
 :math:`\frac1n\sum_i \alpha_i = 1`. This is the baseline the Dixon-Coles
-correction (Stage 3) builds upon. Relative to a textbook Poisson GLM (which
-estimates the same attacks/defenses via ``glm(... family = poisson)``), here the
-likelihood is built and optimized explicitly, enabling time weighting and the
-:math:`\rho` dependence term.
+correction (Stage 3) builds upon. Relative to a textbook Poisson GLM that
+estimates the same attacks/defenses via ``glm(... family = poisson)`` — the
+approach of Vizzoni (2018) — here the likelihood is built and optimized
+explicitly, enabling time weighting and the :math:`\rho` dependence term.
 """
 from __future__ import annotations
 

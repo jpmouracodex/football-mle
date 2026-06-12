@@ -1,7 +1,8 @@
 r"""
 Stage 3 — Dixon-Coles model (1997).
 
-Extends Maher with the dependence parameter :math:`\rho`, which corrects the
+Extends the Maher (1982) / Vizzoni (2018) Poisson baseline with the dependence
+parameter :math:`\rho`, which corrects the
 **joint** probability of the four low-score outcomes (``0-0``, ``1-0``, ``0-1``,
 ``1-1``) through the factor :math:`\tau` (see
 :func:`football_mle.likelihood.tau_correction`). This captures the

@@ -2,9 +2,9 @@ r"""
 Mathematical core — expected rates, the :math:`\tau` correction and the
 (weighted, negative) log-likelihood.
 
-Model (multiplicative parametrization of Maher, 1982 / Dixon-Coles, 1997). For a
-match between home team :math:`i` and away team :math:`j`, goals are
-**conditionally** independent Poisson variables:
+Model (multiplicative parametrization of Maher, 1982 / Dixon-Coles, 1997; see also
+the applied treatment in Vizzoni, 2018). For a match between home team :math:`i`
+and away team :math:`j`, goals are **conditionally** independent Poisson variables:
 
 .. math::
 
