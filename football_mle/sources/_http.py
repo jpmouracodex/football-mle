@@ -1,4 +1,4 @@
-"""Small HTTP helper for fetching remote CSVs with a browser-like User-Agent."""
+"""Small HTTP helpers for fetching remote CSV/JSON with a browser-like User-Agent."""
 from __future__ import annotations
 
 import io
@@ -6,7 +6,7 @@ import io
 import pandas as pd
 import requests
 
-__all__ = ["read_csv_url"]
+__all__ = ["read_csv_url", "read_json_url"]
 
 _HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; football_mle/1.0)"}
 
@@ -21,3 +21,10 @@ def read_csv_url(url: str, *, encoding: str = "utf-8", timeout: int = 30, **kwar
     response.raise_for_status()
     text = response.content.decode(encoding, errors="ignore")
     return pd.read_csv(io.StringIO(text), **kwargs)
+
+
+def read_json_url(url: str, *, timeout: int = 30) -> dict:
+    """Fetch ``url`` and parse it as JSON."""
+    response = requests.get(url, headers=_HEADERS, timeout=timeout)
+    response.raise_for_status()
+    return response.json()

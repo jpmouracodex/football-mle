@@ -1,9 +1,10 @@
 """
-Free club-league data from football-data.co.uk (no API key required).
+Free club-league data (no API key required).
 
-Each league maps to a division code; seasons use the site's ``YYZZ`` convention
-(e.g. ``"2526"`` for 2025-26). The CSVs carry ``Date, HomeTeam, AwayTeam, FTHG,
-FTAG`` (among many betting-odds columns), which the canonical loader extracts.
+Most leagues come from football-data.co.uk, whose CSVs use the ``YYZZ`` season
+convention (e.g. ``"2526"``) and carry ``Date, HomeTeam, AwayTeam, FTHG, FTAG``.
+The **Brasileirão** is not on that site, so it is fetched from ESPN's public,
+key-less JSON API (which also serves live, in-season results).
 """
 from __future__ import annotations
 
@@ -13,7 +14,7 @@ import warnings
 import pandas as pd
 
 from ..data import standardize_dataframe
-from ._http import read_csv_url
+from ._http import read_csv_url, read_json_url
 
 __all__ = [
     "LEAGUES",
@@ -25,8 +26,12 @@ __all__ = [
 ]
 
 _BASE_URL = "https://www.football-data.co.uk/mmz4281/{season}/{code}.csv"
+_ESPN_URL = (
+    "https://site.api.espn.com/apis/site/v2/sports/soccer/{code}/scoreboard"
+    "?dates={year}0101-{year}1231&limit=1000"
+)
 
-# Display name -> football-data.co.uk division code.
+# Display name -> football-data.co.uk division code (European leagues).
 LEAGUES: dict[str, str] = {
     "Premier League (England)": "E0",
     "Championship (England)": "E1",
@@ -42,10 +47,15 @@ LEAGUES: dict[str, str] = {
     "Super League (Greece)": "G1",
 }
 
+# Display name -> ESPN soccer league code (calendar-year seasons, live results).
+_ESPN_LEAGUES: dict[str, str] = {
+    "Brasileirão (Brazil)": "bra.1",
+}
+
 
 def list_leagues() -> list[str]:
-    """Display names of the supported leagues."""
-    return list(LEAGUES)
+    """Display names of the supported leagues (Brasileirão first)."""
+    return list(_ESPN_LEAGUES) + list(LEAGUES)
 
 
 def season_code(start_year: int) -> str:
@@ -68,21 +78,61 @@ def recent_seasons(n: int = 2, today: _dt.date | None = None) -> list[str]:
     return [season_code(start - i) for i in range(n)][::-1]
 
 
+def _fetch_espn(code: str, n_years: int, today: _dt.date | None = None) -> pd.DataFrame:
+    """Fetch the ``n_years`` most recent calendar years of an ESPN league."""
+    today = today or _dt.date.today()
+    years = [today.year - i for i in range(n_years)]
+
+    frames: list[pd.DataFrame] = []
+    errors: list[str] = []
+    for year in years:
+        try:
+            data = read_json_url(_ESPN_URL.format(code=code, year=year))
+            rows: list[dict[str, object]] = []
+            for event in data.get("events", []):
+                competition = event["competitions"][0]
+                if not competition["status"]["type"].get("completed"):
+                    continue  # keep only finished matches (real results)
+                competitors = competition["competitors"]
+                home = next(c for c in competitors if c["homeAway"] == "home")
+                away = next(c for c in competitors if c["homeAway"] == "away")
+                rows.append(
+                    {
+                        "date": event["date"][:10],
+                        "home": home["team"]["displayName"],
+                        "away": away["team"]["displayName"],
+                        "home_goals": int(home["score"]),
+                        "away_goals": int(away["score"]),
+                    }
+                )
+            if rows:
+                frames.append(standardize_dataframe(pd.DataFrame(rows)))
+        except Exception as err:  # network / shape change
+            errors.append(f"{year}: {err!r}")
+
+    if not frames:
+        raise RuntimeError(f"Could not download ESPN league {code!r}. Errors: {errors}")
+    if errors:
+        warnings.warn(f"Some seasons of {code!r} were skipped: {errors}", stacklevel=2)
+    return pd.concat(frames, ignore_index=True).sort_values("date").reset_index(drop=True)
+
+
 def fetch_league(
     league: str,
     seasons: list[str] | None = None,
     *,
     n_seasons: int = 2,
 ) -> pd.DataFrame:
-    """Fetch and combine one or more seasons of a league in the canonical schema.
+    """Fetch and combine recent seasons of a league in the canonical schema.
 
     Parameters
     ----------
     league:
-        A display name from :data:`LEAGUES` or a raw division code (e.g. ``"E0"``).
+        A display name from :func:`list_leagues` (or a raw football-data.co.uk
+        division code). The Brasileirão is routed to the ESPN source.
     seasons:
-        Explicit list of season codes. If ``None``, uses the ``n_seasons`` most
-        recent seasons (more data + time decay = more stable, current ratings).
+        Explicit football-data.co.uk season codes. If ``None``, the ``n_seasons``
+        most recent are used (ignored for ESPN leagues, which use calendar years).
 
     Returns
     -------
@@ -90,6 +140,9 @@ def fetch_league(
         Canonical-schema matches sorted by date. Seasons that fail to download are
         skipped with a warning.
     """
+    if league in _ESPN_LEAGUES:
+        return _fetch_espn(_ESPN_LEAGUES[league], n_seasons)
+
     code = LEAGUES.get(league, league)
     seasons = seasons or recent_seasons(n_seasons)
 
