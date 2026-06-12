@@ -24,7 +24,7 @@ so every modelling choice is transparent and inspectable.
 | Asymptotic **standard errors** (observed information) | [`fitting.py`](football_mle/fitting.py) |
 | Score matrix + 1X2 probabilities | [`prediction.py`](football_mle/prediction.py) |
 | RPS, multi-class Brier, **temporal CV**, **optimal-ξ search** | [`validation.py`](football_mle/validation.py) |
-| **Monte-Carlo tournament simulator** (World Cup) | [`simulation.py`](football_mle/simulation.py) |
+| **Monte-Carlo simulator** — official FIFA 2026 knockout bracket | [`simulation.py`](football_mle/simulation.py) |
 | Free data loaders (clubs + national teams) | [`sources/`](football_mle/sources) |
 | **Streamlit** app | [`app/streamlit_app.py`](app/streamlit_app.py) |
 
@@ -167,9 +167,11 @@ runtime — no API keys or secrets required.
   aggregated **1X2** market its effect is small.
 - Time decay helps only when team strength **drifts** over time (real data); on
   stationary synthetic data it is roughly neutral.
-- The simulator's **group stage is faithful** (real fixtures, top-2 + 8 best
-  thirds); the **knockout bracket is a strength-seeded approximation** of the
-  official slotting (a documented simplification, not the exact third-place table).
+- The simulator is **faithful to the official 2026 format**: real group fixtures
+  (top-2 + 8 best thirds) and FIFA's **fixed knockout bracket** — the published
+  Round-of-32 crossings and the Annex C third-place allocation (validated for all
+  495 qualifying-third combinations). A strength-seeded bracket is used only as a
+  fallback for non-World-Cup inputs.
 
 ---
 

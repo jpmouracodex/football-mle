@@ -65,8 +65,8 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "spinner_sim": "Simulating the tournament {n}×…",
         "pwin_axis": "P(win the World Cup)",
         "wc_caption": (
-            "Group stage simulated faithfully (real fixtures, top-2 + 8 best thirds). "
-            "The knockout bracket is a strength-seeded single-elimination approximation."
+            "Faithful to the official 2026 format: real group fixtures (top-2 + 8 best "
+            "thirds) and FIFA's fixed knockout bracket with the Annex C third-place allocation."
         ),
         "groups_title": "Groups (derived from the official fixture list)",
         "group_label": "Group {label}",
@@ -132,8 +132,9 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "spinner_sim": "A simular o torneio {n}×…",
         "pwin_axis": "P(ganhar o Mundial)",
         "wc_caption": (
-            "Fase de grupos simulada fielmente (jogos reais, 2 primeiros + 8 melhores "
-            "terceiros). O mata-mata é uma aproximação por eliminatória semeada pela força."
+            "Fiel ao formato oficial de 2026: jogos reais da fase de grupos (2 primeiros + "
+            "8 melhores terceiros) e o chaveamento oficial da FIFA com a alocação dos "
+            "terceiros (Anexo C)."
         ),
         "groups_title": "Grupos (derivados do calendário oficial)",
         "group_label": "Grupo {label}",
@@ -199,8 +200,9 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "spinner_sim": "Simulando el torneo {n}×…",
         "pwin_axis": "P(ganar el Mundial)",
         "wc_caption": (
-            "Fase de grupos simulada fielmente (partidos reales, 2 primeros + 8 mejores "
-            "terceros). La eliminatoria es una aproximación sembrada por la fuerza."
+            "Fiel al formato oficial de 2026: partidos reales de la fase de grupos (2 "
+            "primeros + 8 mejores terceros) y el cuadro oficial de la FIFA con la "
+            "asignación de terceros (Anexo C)."
         ),
         "groups_title": "Grupos (derivados del calendario oficial)",
         "group_label": "Grupo {label}",

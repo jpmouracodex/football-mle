@@ -47,7 +47,13 @@ from .likelihood import (
 )
 from .maher import fit_maher, maher_negative_log_likelihood
 from .prediction import MatchPrediction, outcome_probabilities, predict_match, score_matrix
-from .simulation import TournamentResult, derive_groups, simulate_match, simulate_tournament
+from .simulation import (
+    TournamentResult,
+    derive_groups,
+    official_groups,
+    simulate_match,
+    simulate_tournament,
+)
 from .validation import (
     OUTCOME_ORDER,
     EvaluationResult,
@@ -102,6 +108,7 @@ __all__ = [
     "simulate_match",
     "simulate_tournament",
     "derive_groups",
+    "official_groups",
     "TournamentResult",
     "__version__",
 ]

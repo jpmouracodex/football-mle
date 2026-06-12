@@ -27,10 +27,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # app dir -> i18n
 
 from football_mle import (  # noqa: E402
     FitResult,
-    derive_groups,
     fit_dixon_coles,
     fit_maher,
     predict_match,
+    official_groups,
     prepare_data,
     score_matrix,
     simulate_tournament,
@@ -259,12 +259,12 @@ def world_cup_page(t) -> None:
 
     with tab_groups:
         st.subheader(t("groups_title"))
-        groups, _ = derive_groups(fixtures)
+        groups = official_groups(fixtures)
         cols = st.columns(4)
-        for i, (label, group_teams) in enumerate(groups.items()):
+        for i, label in enumerate(sorted(groups)):
             with cols[i % 4]:
                 st.markdown("**" + t("group_label", label=label) + "**")
-                st.write("\n".join(f"- {tm}" for tm in group_teams))
+                st.write("\n".join(f"- {tm}" for tm in groups[label]))
 
     with tab_ratings:
         ratings_section(model_fit, t)
