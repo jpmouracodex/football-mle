@@ -67,7 +67,11 @@ def played_matches(
 
 
 def world_cup_2026_fixtures(df: pd.DataFrame) -> pd.DataFrame:
-    """Extract the 2026 World Cup **group-stage** fixtures (``home, away, neutral``).
+    """Extract the 2026 World Cup **group-stage** fixtures.
+
+    Returns ``date, home, away, neutral, home_goals, away_goals``; the goals are
+    the **actual results** for matches already played and ``NaN`` for the ones
+    still to come, so a live simulation can condition on what has happened.
 
     Robust to future additions of knockout fixtures: matches are taken in date
     order and each team is capped at its 3 group games, which isolates exactly the
@@ -82,9 +86,14 @@ def world_cup_2026_fixtures(df: pd.DataFrame) -> pd.DataFrame:
         home, away = row["home"], row["away"]
         if appearances.get(home, 0) < 3 and appearances.get(away, 0) < 3:
             rows.append(
-                {"date": row["date"], "home": home, "away": away, "neutral": bool(row["neutral"])}
+                {
+                    "date": row["date"], "home": home, "away": away,
+                    "neutral": bool(row["neutral"]),
+                    "home_goals": row["home_goals"], "away_goals": row["away_goals"],
+                }
             )
             appearances[home] = appearances.get(home, 0) + 1
             appearances[away] = appearances.get(away, 0) + 1
 
-    return pd.DataFrame(rows, columns=["date", "home", "away", "neutral"]).reset_index(drop=True)
+    columns = ["date", "home", "away", "neutral", "home_goals", "away_goals"]
+    return pd.DataFrame(rows, columns=columns).reset_index(drop=True)

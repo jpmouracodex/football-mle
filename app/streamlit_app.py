@@ -52,12 +52,12 @@ st.set_page_config(page_title="football_mle — Goal prediction", page_icon="⚽
 # ---------------------------------------------------------------------------
 # Cached data + model builders (so widget interactions don't refetch/refit)
 # ---------------------------------------------------------------------------
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=1800, show_spinner=False)
 def load_league_matches(league: str, n_seasons: int) -> pd.DataFrame:
     return fetch_league(league, seasons=recent_seasons(n_seasons))
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=1800, show_spinner=False)
 def load_international() -> pd.DataFrame:
     return fetch_international_results()
 
@@ -70,12 +70,12 @@ def _fit(df: pd.DataFrame, model: str, half_life_days: int) -> FitResult:
     return result
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=1800, show_spinner=False)
 def fit_league_model(league: str, n_seasons: int, model: str, half_life_days: int) -> FitResult:
     return _fit(load_league_matches(league, n_seasons), model, half_life_days)
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=1800, show_spinner=False)
 def fit_international_model(window_years: int, model: str, half_life_days: int) -> FitResult:
     raw = load_international()
     since = pd.Timestamp.today() - pd.DateOffset(years=window_years)
@@ -83,12 +83,12 @@ def fit_international_model(window_years: int, model: str, half_life_days: int) 
     return _fit(train, model, half_life_days)
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=1800, show_spinner=False)
 def world_cup_fixtures() -> pd.DataFrame:
     return world_cup_2026_fixtures(load_international())
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=1800, show_spinner=False)
 def simulate_world_cup(window_years: int, model: str, half_life_days: int, n_sims: int) -> pd.DataFrame:
     model_fit = fit_international_model(window_years, model, half_life_days)
     fixtures = world_cup_fixtures()
@@ -228,6 +228,13 @@ def world_cup_page(t) -> None:
     with tab_sim:
         with st.spinner(t("spinner_sim", n=n_sims)):
             probs = simulate_world_cup(window, model, half_life, n_sims)
+        # Relabel with official group letters and flag games already played.
+        team_to_letter = {tm: label for label, tms in official_groups(fixtures).items() for tm in tms}
+        probs = probs.copy()
+        probs["group"] = probs["team"].map(team_to_letter).fillna(probs["group"])
+        n_played = int(fixtures[["home_goals", "away_goals"]].notna().all(axis=1).sum())
+        if n_played:
+            st.info(t("live_info", played=n_played, total=len(fixtures)))
         st.subheader(t("tournament_probs"))
         top = probs.head(16)
         chart = (

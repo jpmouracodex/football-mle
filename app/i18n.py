@@ -62,6 +62,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "tab_ratings": "📊 Ratings",
         "tab_match": "⚔️ Match",
         "tournament_probs": "Tournament probabilities",
+        "live_info": "{played} of {total} group matches already played — the simulation is conditioned on the real results.",
         "spinner_sim": "Simulating the tournament {n}×…",
         "pwin_axis": "P(win the World Cup)",
         "wc_caption": (
@@ -129,6 +130,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "tab_ratings": "📊 Ratings",
         "tab_match": "⚔️ Jogo",
         "tournament_probs": "Probabilidades do torneio",
+        "live_info": "{played} de {total} jogos da fase de grupos já disputados — a simulação está condicionada aos resultados reais.",
         "spinner_sim": "A simular o torneio {n}×…",
         "pwin_axis": "P(ganhar o Mundial)",
         "wc_caption": (
@@ -197,6 +199,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "tab_ratings": "📊 Ratings",
         "tab_match": "⚔️ Partido",
         "tournament_probs": "Probabilidades del torneo",
+        "live_info": "{played} de {total} partidos de la fase de grupos ya jugados — la simulación está condicionada a los resultados reales.",
         "spinner_sim": "Simulando el torneo {n}×…",
         "pwin_axis": "P(ganar el Mundial)",
         "wc_caption": (
