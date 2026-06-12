@@ -49,6 +49,27 @@ from i18n import LANGUAGES, make_t  # noqa: E402
 
 st.set_page_config(page_title="football_mle — Goal prediction", page_icon="⚽", layout="wide")
 
+# Polyfill for country-flag emojis on Windows (Segoe UI Emoji lacks regional indicators).
+# TwemojiCountryFlags covers U+1F1E6-1F1FF (ISO flags) and subdivision tag sequences.
+st.markdown(
+    """
+    <style>
+    @font-face {
+        font-family: 'TwemojiCountryFlags';
+        unicode-range: U+1F1E0-1F1FF, U+1F3F4, U+200D, U+FE0F,
+                       U+E0062-U+E0065, U+E006E, U+E0067, U+E0073,
+                       U+E0063, U+E0074, U+E0077, U+E006C, U+E007F;
+        src: url('https://cdn.jsdelivr.net/npm/country-flag-emoji-polyfill@0.1/dist/TwemojiCountryFlags.woff2')
+             format('woff2');
+    }
+    html, body, [class*="css"] {
+        font-family: 'TwemojiCountryFlags', 'Source Sans Pro', sans-serif;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 # ---------------------------------------------------------------------------
 # Cached data + model builders (so widget interactions don't refetch/refit)
