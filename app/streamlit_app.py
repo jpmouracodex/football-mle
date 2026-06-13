@@ -170,13 +170,15 @@ def predictor_section(model_fit: FitResult, t, allow_neutral: bool = False, defa
 
     prediction = predict_match(model_fit, home, away, max_goals=10, neutral=neutral)
 
-    # Show flag images above each team name in the metrics row.
-    fh, fa = flag_url(home, 24), flag_url(away, 24)
-    img = lambda url, name: f'<img src="{url}" height="18" style="vertical-align:middle;margin-right:4px">{name}' if url else name
-    st.markdown(
-        f'<p style="margin:0">{img(fh, home)} vs {img(fa, away)}</p>',
-        unsafe_allow_html=True,
-    )
+    # Show flag images next to team names using st.image (avoids CSP restrictions).
+    fh, fa = flag_url(home, 40), flag_url(away, 40)
+    fi1, fi2, _, fi3, fi4, _ = st.columns([0.15, 1.2, 0.3, 0.15, 1.2, 1])
+    if fh:
+        fi1.image(fh, width=24)
+    fi2.markdown(f"**{home}**")
+    if fa:
+        fi3.image(fa, width=24)
+    fi4.markdown(f"**{away}**")
 
     m1, m2, m3, m4 = st.columns(4)
     m1.metric(f"1 · {home}", f"{100 * prediction.prob_home:.1f}%")
@@ -293,12 +295,12 @@ def world_cup_page(t) -> None:
         for i, label in enumerate(sorted(groups)):
             with cols[i % 4]:
                 st.markdown("**" + t("group_label", label=label) + "**")
-                lines = []
                 for tm in groups[label]:
                     url = flag_url(tm, 20)
-                    img_tag = f'<img src="{url}" height="14" style="vertical-align:middle;margin-right:4px">' if url else ""
-                    lines.append(f"<li>{img_tag}{tm}</li>")
-                st.markdown("<ul>" + "".join(lines) + "</ul>", unsafe_allow_html=True)
+                    ca, cb = st.columns([0.12, 1])
+                    if url:
+                        ca.image(url, width=16)
+                    cb.markdown(tm)
 
     with tab_ratings:
         ratings_section(model_fit, t)
