@@ -84,8 +84,8 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     "pt": {
         "subtitle": (
             "Modelos de Maher (1982) e Dixon-Coles (1997), estendendo Vizzoni (2018), "
-            "ajustados de raiz por MLE. "
-            "Dados grátis: football-data.co.uk (clubes) e martj42/international_results "
+            "ajustados do zero por MLE. "
+            "Dados gratuitos: football-data.co.uk (clubes) e martj42/international_results "
             "(seleções)."
         ),
         "mode": "Modo",
@@ -95,58 +95,58 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "model_dixon": "Dixon-Coles",
         "model_maher": "Maher (Poisson puro)",
         "half_life": "Meia-vida do decaimento (dias, 0 = desligado)",
-        "ratings_title": "Ratings das equipas (MLE)",
+        "ratings_title": "Ratings das equipes (MLE)",
         "attack_axis": "Força de ataque (média = 1)",
         "defense_legend": "Defesa (menor = melhor)",
         "home_adv": (
-            "Vantagem em casa γ = {gamma:.3f} (≈ {pct:.0f}% mais golos em casa)"
-            "{rho_suffix} · log-verosimilhança = {ll:.1f}"
+            "Vantagem em casa γ = {gamma:.3f} (≈ {pct:.0f}% mais gols em casa)"
+            "{rho_suffix} · log-verossimilhança = {ll:.1f}"
         ),
         "rho_suffix": " · ρ = {rho:+.3f}",
         "predictor_title": "Previsor de jogos",
-        "home_team": "Equipa da casa",
-        "away_team": "Equipa visitante",
+        "home_team": "Equipe da casa",
+        "away_team": "Equipe visitante",
         "neutral_venue": "Campo neutro",
-        "pick_two": "Escolhe duas equipas diferentes.",
+        "pick_two": "Escolha duas equipes diferentes.",
         "draw": "Empate",
-        "expected_goals": "Golos esperados",
-        "goals_of": "Golos de {team}",
+        "expected_goals": "Gols esperados",
+        "goals_of": "Gols de {team}",
         "prob_pct": "P (%)",
         "most_likely": "Placar mais provável: **{home} {hs}–{as_} {away}** ({prob:.1f}%)",
         "club_header": "Liga de clubes",
         "league": "Liga",
-        "seasons": "Épocas de histórico",
-        "spinner_league": "A descarregar e ajustar {league}…",
+        "seasons": "Temporadas de histórico",
+        "spinner_league": "Baixando e ajustando {league}…",
         "error_league": "Não foi possível carregar/ajustar esta liga: {err}",
-        "success_league": "{league} · {model} · {n} equipas",
+        "success_league": "{league} · {model} · {n} equipes",
         "wc_header": "Mundial 2026",
         "training_window": "Janela de treino (anos de jogos de seleções)",
-        "mc_sims": "Simulações Monte-Carlo",
-        "spinner_nt": "A ajustar os ratings das seleções…",
+        "mc_sims": "Simulações Monte Carlo",
+        "spinner_nt": "Ajustando os ratings das seleções…",
         "error_intl": "Não foi possível carregar os dados de seleções: {err}",
-        "success_intl": "Ajustado com jogos de seleções dos últimos {window} anos · {n} equipas",
+        "success_intl": "Ajustado com jogos de seleções dos últimos {window} anos · {n} equipes",
         "tab_odds": "🏆 Probabilidades do título",
         "tab_groups": "👥 Grupos",
         "tab_ratings": "📊 Ratings",
         "tab_match": "⚔️ Jogo",
         "tournament_probs": "Probabilidades do torneio",
-        "live_info": "{played} de {total} jogos da fase de grupos já disputados — a simulação está condicionada aos resultados reais.",
-        "spinner_sim": "A simular o torneio {n}×…",
+        "live_info": "{played} de {total} jogos da fase de grupos já disputados — a simulação está condicionada nos resultados reais.",
+        "spinner_sim": "Simulando o torneio {n}×…",
         "pwin_axis": "P(ganhar o Mundial)",
         "wc_caption": (
             "Fiel ao formato oficial de 2026: jogos reais da fase de grupos (2 primeiros + "
             "8 melhores terceiros) e o chaveamento oficial da FIFA com a alocação dos "
-            "terceiros (Anexo C)."
+            "terceiros colocados (Anexo C)."
         ),
         "groups_title": "Grupos (derivados do calendário oficial)",
         "group_label": "Grupo {label}",
-        "col_team": "Equipa",
+        "col_team": "Equipe",
         "col_group": "Grupo",
         "col_win_group": "Vence grupo",
         "col_advance": "Avança",
-        "col_r16": "Oitavos",
-        "col_qf": "Quartos",
-        "col_sf": "Meias",
+        "col_r16": "Oitavas de final",
+        "col_qf": "Quartas de final",
+        "col_sf": "Semifinais",
         "col_final": "Final",
         "col_champion": "Campeão",
     },
